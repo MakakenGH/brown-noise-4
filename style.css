@@ -1,0 +1,297 @@
+/* ===================================================================
+   Deep Noise — Stylesheet
+   Dark, ambient UI optimised for mobile (Android / iOS).
+   =================================================================== */
+
+/* ── Reset & custom properties ────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           #080810;
+  --bg-end:       #0f0f1e;
+  --surface:      rgba(255, 255, 255, 0.035);
+  --surface-hover:rgba(255, 255, 255, 0.06);
+  --border:       rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --accent:       #c8956a;
+  --accent-soft:  rgba(200, 149, 106, 0.12);
+  --accent-glow:  rgba(200, 149, 106, 0.2);
+  --text:         #e0e0ec;
+  --text-dim:     #7a7a90;
+  --text-muted:   #4a4a5e;
+  --track:        rgba(255, 255, 255, 0.06);
+  color-scheme: dark;
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               Helvetica, Arial, sans-serif;
+  background: linear-gradient(160deg, var(--bg) 0%, var(--bg-end) 100%);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+/* ── App shell ────────────────────────────────────────────────────── */
+.app {
+  max-width: 440px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem;
+  padding-top:    max(1.5rem, env(safe-area-inset-top));
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.app::-webkit-scrollbar { display: none; }
+
+/* ── Header ───────────────────────────────────────────────────────── */
+header { text-align: center; flex-shrink: 0; }
+
+header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.subtitle {
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+  font-weight: 400;
+  margin-top: 0.125rem;
+}
+
+/* ── Visualizer & play button ─────────────────────────────────────── */
+.visualizer-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2.2 / 1;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+#visualizer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.play-btn {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: rgba(12, 12, 24, 0.65);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.play-btn:hover {
+  background: rgba(20, 20, 40, 0.8);
+  border-color: var(--border-hover);
+}
+
+.play-btn:active {
+  transform: translate(-50%, -50%) scale(0.94);
+}
+
+.play-btn.playing {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 24px var(--accent-glow),
+              0 0 60px rgba(200, 149, 106, 0.06);
+}
+
+.play-btn svg { width: 26px; height: 26px; }
+.icon-play    { margin-left: 2px; }   /* optical centering */
+
+/* ── Slider controls ──────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+  flex-shrink: 0;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.control-header label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.control-value {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+
+/* ── Range input (cross-browser) ──────────────────────────────────── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    var(--accent)  0%,
+    var(--accent)  calc(var(--val, 50) * 1%),
+    var(--track)   calc(var(--val, 50) * 1%)
+  );
+  transition: opacity 0.15s;
+}
+
+/* WebKit / Blink thumb */
+input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 4px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--text);
+  border: none;
+  margin-top: -9px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 6px var(--accent-soft), 0 1px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--track);
+  border: none;
+}
+
+input[type="range"]::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--text);
+  border: none;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+/* ── Presets ───────────────────────────────────────────────────────── */
+.presets { flex-shrink: 0; }
+
+.presets h2 {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.625rem;
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.preset-btn {
+  padding: 0.6rem 0.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  font-weight: 450;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  line-height: 1.4;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.preset-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+
+.preset-btn:active { transform: scale(0.96); }
+
+.preset-btn.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.preset-emoji {
+  display: block;
+  font-size: 1.125rem;
+  margin-bottom: 0.125rem;
+  line-height: 1;
+}
+
+/* ── Landscape / short screens ────────────────────────────────────── */
+@media (max-height: 580px) {
+  .app { padding: 0.75rem 1.25rem; gap: 0.75rem; }
+  .visualizer-container { aspect-ratio: 3.5 / 1; }
+  header h1 { font-size: 1.25rem; }
+  .controls { gap: 0.75rem; }
+}

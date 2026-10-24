@@ -1,0 +1,20 @@
+{
+  "name": "Deep Noise — Brown Noise Generator",
+  "short_name": "Deep Noise",
+  "description": "Deep brown noise generator for sleep, focus, and meditation. Plays in the background.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0d0d1a",
+  "background_color": "#080810",
+  "categories": ["health", "utilities"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

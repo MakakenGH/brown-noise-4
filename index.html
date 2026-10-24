@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description"
+        content="Deep brown noise generator for sleep, focus, and meditation. Plays reliably in the background on Android.">
+  <meta name="theme-color" content="#0d0d1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Deep Noise</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── Title ──────────────────────────────────────────── -->
+  <header>
+    <h1>Deep Noise</h1>
+    <p class="subtitle">Brown noise generator</p>
+  </header>
+
+  <!-- ── Visualizer + Play ──────────────────────────────── -->
+  <div class="visualizer-container">
+    <canvas id="visualizer"></canvas>
+    <button id="playBtn" class="play-btn" aria-label="Play or pause noise">
+      <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+      <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+        <rect x="6" y="4" width="4" height="16" rx="1"/>
+        <rect x="14" y="4" width="4" height="16" rx="1"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ── Sliders ────────────────────────────────────────── -->
+  <section class="controls">
+    <div class="control-group">
+      <div class="control-header">
+        <label for="depth">Depth</label>
+        <span class="control-value" id="depthValue">70 %</span>
+      </div>
+      <input type="range" id="depth" min="0" max="100" value="70"
+             class="slider" autocomplete="off">
+    </div>
+
+    <div class="control-group">
+      <div class="control-header">
+        <label for="rumble">Rumble</label>
+        <span class="control-value" id="rumbleValue">50 %</span>
+      </div>
+      <input type="range" id="rumble" min="0" max="100" value="50"
+             class="slider" autocomplete="off">
+    </div>
+
+    <div class="control-group">
+      <div class="control-header">
+        <label for="volume">Volume</label>
+        <span class="control-value" id="volumeValue">40 %</span>
+      </div>
+      <input type="range" id="volume" min="0" max="100" value="40"
+             class="slider" autocomplete="off">
+    </div>
+  </section>
+
+  <!-- ── Presets ────────────────────────────────────────── -->
+  <section class="presets">
+    <h2>Presets</h2>
+    <div class="preset-grid" id="presetGrid">
+      <!-- populated by app.js -->
+    </div>
+  </section>
+
+</div>
+
+<!-- Hidden <audio> element drives Android background-playback via MediaSession -->
+<audio id="bgAudio" playsinline webkit-playsinline></audio>
+
+<script src="app.js"></script>
+</body>
+</html>
