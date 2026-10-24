@@ -1,88 +1,102 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="description"
-        content="Deep brown noise generator for sleep, focus, and meditation. Plays reliably in the background on Android.">
-  <meta name="theme-color" content="#0d0d1a">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Deep Brown</title>
+  <meta name="description" content="A deep brown noise generator with adjustable depth.">
+  <meta name="theme-color" content="#120c09">
+  <meta name="color-scheme" content="dark">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>Deep Noise</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="style.css">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Deep Brown">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <main class="app">
 
-<div class="app">
+    <header class="top">
+      <h1>Deep Brown</h1>
+      <button id="install" class="ghost" type="button" hidden>Install app</button>
+    </header>
 
-  <!-- ── Title ──────────────────────────────────────────── -->
-  <header>
-    <h1>Deep Noise</h1>
-    <p class="subtitle">Brown noise generator</p>
-  </header>
-
-  <!-- ── Visualizer + Play ──────────────────────────────── -->
-  <div class="visualizer-container">
-    <canvas id="visualizer"></canvas>
-    <button id="playBtn" class="play-btn" aria-label="Play or pause noise">
-      <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M8 5v14l11-7z"/>
-      </svg>
-      <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" style="display:none">
-        <rect x="6" y="4" width="4" height="16" rx="1"/>
-        <rect x="14" y="4" width="4" height="16" rx="1"/>
-      </svg>
-    </button>
-  </div>
-
-  <!-- ── Sliders ────────────────────────────────────────── -->
-  <section class="controls">
-    <div class="control-group">
-      <div class="control-header">
-        <label for="depth">Depth</label>
-        <span class="control-value" id="depthValue">70 %</span>
+    <section id="field" class="field" role="slider" tabindex="0"
+             aria-label="Deepness" aria-orientation="vertical"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+      <canvas id="scope" aria-hidden="true"></canvas>
+      <div class="readout" aria-hidden="true">
+        <div class="big" id="deepNum">50</div>
+        <div class="name">Deepness</div>
+        <div class="sub" id="deepHz">Rolls off above 200 Hz</div>
       </div>
-      <input type="range" id="depth" min="0" max="100" value="70"
-             class="slider" autocomplete="off">
-    </div>
+      <p class="hint" id="hint" aria-hidden="true">Drag the line down to go deeper</p>
+    </section>
 
-    <div class="control-group">
-      <div class="control-header">
-        <label for="rumble">Rumble</label>
-        <span class="control-value" id="rumbleValue">50 %</span>
+    <section class="transport" aria-label="Playback">
+      <button id="prev" class="round small" type="button" aria-label="Previous preset">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14L9.5 12z"/></svg>
+      </button>
+      <button id="play" class="round big" type="button" aria-label="Play">
+        <svg id="playIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button id="next" class="round small" type="button" aria-label="Next preset">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5l10.5 7L4 19z"/></svg>
+      </button>
+    </section>
+    <p id="status" class="status" role="status" aria-live="polite">Paused</p>
+
+    <section aria-label="Presets">
+      <div id="presets" class="presets"></div>
+    </section>
+
+    <section class="controls" aria-label="Sound shaping">
+      <label class="ctl" for="rumble">
+        <span class="row"><span>Rumble</span><output id="rumbleOut">35%</output></span>
+        <input id="rumble" type="range" min="0" max="100" step="1">
+        <span class="desc">Extra weight below 90 Hz</span>
+      </label>
+      <label class="ctl" for="width">
+        <span class="row"><span>Width</span><output id="widthOut">60%</output></span>
+        <input id="width" type="range" min="0" max="100" step="1">
+        <span class="desc">From centred to enveloping</span>
+      </label>
+      <label class="ctl" for="swell">
+        <span class="row"><span>Swell</span><output id="swellOut">10%</output></span>
+        <input id="swell" type="range" min="0" max="100" step="1">
+        <span class="desc">Slow, never-repeating breathing</span>
+      </label>
+      <label class="ctl" for="volume">
+        <span class="row"><span>Volume</span><output id="volumeOut">55%</output></span>
+        <input id="volume" type="range" min="0" max="100" step="1">
+        <span class="desc">Level stays even as depth changes</span>
+      </label>
+    </section>
+
+    <section class="timer" aria-label="Sleep timer">
+      <div class="row">
+        <span class="label">Sleep timer</span>
+        <span id="timerLeft" class="left" aria-live="off"></span>
       </div>
-      <input type="range" id="rumble" min="0" max="100" value="50"
-             class="slider" autocomplete="off">
-    </div>
+      <div id="timerBtns" class="seg" role="group" aria-label="Stop after"></div>
+    </section>
 
-    <div class="control-group">
-      <div class="control-header">
-        <label for="volume">Volume</label>
-        <span class="control-value" id="volumeValue">40 %</span>
+    <section class="route" aria-label="Output mode">
+      <div class="row"><span class="label">Output</span></div>
+      <div id="routeBtns" class="seg two" role="group" aria-label="Output mode">
+        <button type="button" data-mode="direct">Direct</button>
+        <button type="button" data-mode="stream">Stream</button>
       </div>
-      <input type="range" id="volume" min="0" max="100" value="40"
-             class="slider" autocomplete="off">
-    </div>
-  </section>
+      <p class="desc">Direct is cleanest. If playback stops with the screen off, switch to Stream.</p>
+    </section>
 
-  <!-- ── Presets ────────────────────────────────────────── -->
-  <section class="presets">
-    <h2>Presets</h2>
-    <div class="preset-grid" id="presetGrid">
-      <!-- populated by app.js -->
-    </div>
-  </section>
+    <p class="foot">Deep settings need headphones or a speaker that reaches below 100 Hz. Phone speakers can't reproduce them.</p>
+  </main>
 
-</div>
-
-<!-- Hidden <audio> element drives Android background-playback via MediaSession -->
-<audio id="bgAudio" playsinline webkit-playsinline></audio>
-
-<script src="app.js"></script>
+  <audio id="sink" playsinline></audio>
+  <script src="app.js"></script>
 </body>
 </html>
